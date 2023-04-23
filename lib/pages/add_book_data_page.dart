@@ -1,6 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:mylibrary/db/database_helper.dart';
+import 'package:mylibrary/db/entity.dart';
+import 'package:mylibrary/pages/book_list_page.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ImagePreview extends StatefulWidget {
   final String imagePath;
@@ -37,7 +41,7 @@ class _ImagePreviewState extends State<ImagePreview> {
 
     Navigator.of(context).pop();
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => BookListPage()));
+        .push(MaterialPageRoute(builder: (context) => const BookListPage()));
   }
 
   // void _saveImage() {
