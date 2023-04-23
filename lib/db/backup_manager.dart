@@ -16,6 +16,13 @@ class BackupManager {
     final worksheet = workbook['Books'];
 
     final books = await _database.rawQuery('SELECT * FROM books');
+
+    for (var j = 0; j < Book.propsString().length; j++) {
+      worksheet
+          .cell(CellIndex.indexByColumnRow(columnIndex: j, rowIndex: 0))
+          .value = Book.propsString()[j];
+    }
+
     for (var i = 0; i < books.length; i++) {
       final book = Book.fromMap(books[i]);
 
@@ -32,18 +39,11 @@ class BackupManager {
         replace: true,
       );
 
-      worksheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: i))
-          .value = book.id;
-      worksheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: i))
-          .value = book.bookName;
-      worksheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: i))
-          .value = book.authorName;
-      worksheet
-          .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: i))
-          .value = book.bookFileName;
+      for (var j = 0; j < book.props.length; j++) {
+        worksheet
+            .cell(CellIndex.indexByColumnRow(columnIndex: j, rowIndex: i + 1))
+            .value = book.props[j];
+      }
     }
 
     final fileBytes = workbook.save();

@@ -41,6 +41,12 @@ class Book {
     };
   }
 
+  List<Object?> get props => [id, bookName, authorName, imagePath];
+
+  static List<String> propsString() {
+    return ["id", "bookName", "authorName", "image"];
+  }
+
   Future<Uint8List> loadImageBytes() async {
     final appDir = await getApplicationDocumentsDirectory();
     final imageFile = File('${appDir.path}/$imagePath');
