@@ -26,9 +26,8 @@ class _ImagePreviewState extends State<ImagePreview> {
     final fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
 
     final appDir = await getApplicationDocumentsDirectory();
-    final savedImage =
-        await File(widget.imagePath).copy('${appDir.path}/$fileName');
-    final savedImagePath = savedImage.path;
+    await File(widget.imagePath).copy('${appDir.path}/$fileName');
+    final savedImagePath = fileName;
 
     final book = Book(
       id: null,

@@ -1,10 +1,16 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:mylibrary/db/database_helper.dart';
 import 'package:mylibrary/db/entity.dart';
 import 'package:mylibrary/pages/book_preview.dart';
 import 'package:path_provider/path_provider.dart';
+
+import '../db/backup_manager.dart';
+
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 
 class BookListPage extends StatefulWidget {
   const BookListPage({Key? key}) : super(key: key);
@@ -70,16 +76,68 @@ class _BookListPageState extends State<BookListPage> {
       );
     }
 
+    Future<void> _backup() async {
+      final appDir = await getApplicationDocumentsDirectory();
+      final defaultBackupFolder = '${appDir.path}/backup';
+      final initialDirectory = Directory(defaultBackupFolder);
+      final database = await DatabaseHelper.instance.database;
+
+      if (!await FlutterFileDialog.isPickDirectorySupported()) {
+        print("Picking directory not supported");
+        return;
+      }
+
+      final pickedDirectory = await FlutterFileDialog.pickDirectory();
+      if (pickedDirectory != null) {
+        final backupManager = BackupManager(database, pickedDirectory);
+        await backupManager.backup();
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Backup completed.')));
+
+        // final filePath = await FlutterFileDialog.saveFileToDirectory(
+        //   directory: pickedDirectory!,
+        //   data: file.readAsBytesSync(),
+        //   mimeType: "image/jpeg",
+        //   fileName: "fileName.jpeg",
+        //   replace: true,
+        // );
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Book List'),
+        actions: [
+          IconButton(
+            onPressed: _backup,
+            icon: const Icon(Icons.backup),
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: _books.length,
         itemBuilder: (context, index) {
           final book = _books[index];
           return ListTile(
-            leading: Image.file(File(book.imagePath)),
+            leading: FutureBuilder<Uint8List>(
+              future: book.loadImageBytes(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const SizedBox(
+                    width: 56,
+                    height: 56,
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
+                if (snapshot.hasData) {
+                  return Image.memory(snapshot.data!);
+                } else {
+                  return const Icon(Icons.image);
+                }
+              },
+            ),
             title: Text(book.bookName),
             subtitle: Text(book.authorName),
             onTap: () => _showImagePreview(book),

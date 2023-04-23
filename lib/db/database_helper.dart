@@ -6,13 +6,6 @@ class DatabaseHelper {
   static const _databaseName = 'book_database.db';
   static const _databaseVersion = 1;
 
-  static const table = 'books';
-
-  static const columnId = 'id';
-  static const columnBookName = 'bookName';
-  static const columnAuthorName = 'authorName';
-  static const columnImagePath = 'imagePath';
-
   static Database? _database;
 
   DatabaseHelper._privateConstructor();
@@ -41,29 +34,29 @@ class DatabaseHelper {
 
   Future<void> _onCreate(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE $table (
-         $columnId INTEGER PRIMARY KEY,
-        $columnBookName TEXT NOT NULL,
-        $columnAuthorName TEXT NOT NULL,
-        $columnImagePath TEXT NOT NULL
+      CREATE TABLE ${Book.table} (
+         ${Book.columnId} INTEGER PRIMARY KEY,
+        ${Book.columnBookName} TEXT NOT NULL,
+        ${Book.columnAuthorName} TEXT NOT NULL,
+        ${Book.columnImagePath} TEXT NOT NULL
       )
     ''');
   }
 
   Future<int> insertBook(Book book) async {
     final db = await database;
-    return await db.insert(table, book.toMap());
+    return await db.insert(Book.table, book.toMap());
   }
 
   Future<List<Book>> getAllBooks() async {
     final db = await database;
-    final result = await db.query(table);
+    final result = await db.query(Book.table);
 
     return result.map((book) => Book.fromMap(book)).toList();
   }
 
   Future<void> deleteBook(int id) async {
     final db = await database;
-    await db.delete(table, where: '$columnId = ?', whereArgs: [id]);
+    await db.delete(Book.table, where: '${Book.columnId} = ?', whereArgs: [id]);
   }
 }

@@ -4,6 +4,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mylibrary/pages/add_book_data_page.dart';
+import 'package:mylibrary/pages/book_list_page.dart';
 
 class CameraPage extends StatefulWidget {
   @override
@@ -64,7 +65,7 @@ class _CameraPageState extends State<CameraPage> {
 
   void pickImage() async {
     final pickedFile =
-    await ImagePicker().getImage(source: ImageSource.gallery);
+        await ImagePicker().getImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       Navigator.of(context).push(
         MaterialPageRoute(
@@ -113,6 +114,16 @@ class _CameraPageState extends State<CameraPage> {
                   onPressed: pickImage,
                   child: const Icon(Icons.image),
                 ),
+                FloatingActionButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const BookListPage(),
+                      ),
+                    );
+                  },
+                  child: const Icon(Icons.list),
+                ),
               ],
             ),
           ),
@@ -121,4 +132,3 @@ class _CameraPageState extends State<CameraPage> {
     );
   }
 }
-
