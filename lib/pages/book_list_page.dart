@@ -2,15 +2,13 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'package:mylibrary/db/database_helper.dart';
 import 'package:mylibrary/db/entity.dart';
 import 'package:mylibrary/pages/book_preview.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../db/backup_manager.dart';
-
-import 'package:path_provider/path_provider.dart';
-import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 
 class BookListPage extends StatefulWidget {
   const BookListPage({Key? key}) : super(key: key);
@@ -77,13 +75,11 @@ class _BookListPageState extends State<BookListPage> {
     }
 
     Future<void> _backup() async {
-      final appDir = await getApplicationDocumentsDirectory();
-      final defaultBackupFolder = '${appDir.path}/backup';
-      final initialDirectory = Directory(defaultBackupFolder);
       final database = await DatabaseHelper.instance.database;
 
       if (!await FlutterFileDialog.isPickDirectorySupported()) {
-        print("Picking directory not supported");
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Backup is not supported.')));
         return;
       }
 
@@ -93,14 +89,6 @@ class _BookListPageState extends State<BookListPage> {
         await backupManager.backup();
         ScaffoldMessenger.of(context)
             .showSnackBar(const SnackBar(content: Text('Backup completed.')));
-
-        // final filePath = await FlutterFileDialog.saveFileToDirectory(
-        //   directory: pickedDirectory!,
-        //   data: file.readAsBytesSync(),
-        //   mimeType: "image/jpeg",
-        //   fileName: "fileName.jpeg",
-        //   replace: true,
-        // );
       }
     }
 

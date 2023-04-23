@@ -27,11 +27,7 @@ class BackupManager {
       final book = Book.fromMap(books[i]);
 
       final imageBytes = await book.loadImageBytes();
-      // final imagePath = path.join(_backupFolder, '${book.id}.jpg');
-      // final imageFile = File(imagePath);
-      // await imageFile.writeAsBytes(imageBytes);
-
-      final filePath = await FlutterFileDialog.saveFileToDirectory(
+      await FlutterFileDialog.saveFileToDirectory(
         directory: pickedDirectory,
         data: imageBytes,
         mimeType: "image/jpeg",
@@ -49,7 +45,7 @@ class BackupManager {
     final fileBytes = workbook.save();
 
     if (fileBytes != null) {
-      final filePath = await FlutterFileDialog.saveFileToDirectory(
+      await FlutterFileDialog.saveFileToDirectory(
         directory: pickedDirectory,
         data: Uint8List.fromList(fileBytes),
         mimeType:
@@ -57,8 +53,6 @@ class BackupManager {
         fileName: "${DateTime.now().toIso8601String()}.xlsx",
         replace: true,
       );
-
-      print('Backup file saved to ${filePath}');
     }
   }
 }

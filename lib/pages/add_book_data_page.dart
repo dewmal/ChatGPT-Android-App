@@ -43,13 +43,6 @@ class _ImagePreviewState extends State<ImagePreview> {
         .push(MaterialPageRoute(builder: (context) => const BookListPage()));
   }
 
-  // void _saveImage() {
-  //   final bookName = _bookNameController.text;
-  //   final authorName = _authorNameController.text;
-  //   // TODO: Save the image and book/author details
-  //   Navigator.of(context).pop();
-  // }
-
   @override
   void dispose() {
     _bookNameController.dispose();
